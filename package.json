@@ -1,0 +1,30 @@
+{
+  "name": "ayako-bot",
+  "version": "1.0.0",
+  "description": "A public release of the Discord bot called Meat-Friend",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/8BitBlimp/Ayako-Bot.git"
+  },
+  "author": "8BitBlimp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/8BitBlimp/Ayako-Bot/issues"
+  },
+  "homepage": "https://github.com/8BitBlimp/Ayako-Bot#readme",
+  "dependencies": {
+    "better-sqlite3": "^8.1.0",
+    "date-and-time": "^2.4.2",
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3",
+    "pretty-ms": "^8.0.0",
+    "quick.db": "^9.0.8"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0"
+  }
+}
