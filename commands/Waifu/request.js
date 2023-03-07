@@ -14,9 +14,9 @@ module.exports = {
 
 		let target = interaction.options.getString('link')
 
-
+		let dbName = target.replace('_', ' ')
 		// do a check to see if it already exists in DB
-		let check = await Waifu.find({name: target})
+		let check = await Waifu.exists({ name: dbName})
 		if(check) {
 			await interaction.reply('Already exists in DB')
 			return
@@ -55,7 +55,7 @@ module.exports = {
 		console.log(rarity)
 
 		const waifu = new Waifu({
-			name: target.replace('_', ' '),
+			name: dbName,
 			url: topPick.file_url,
 			rarity: rarity,
 			id: topPick.id

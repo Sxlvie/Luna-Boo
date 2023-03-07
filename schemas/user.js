@@ -2,10 +2,10 @@ const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
     id: Number,
-    lastPack: String,
+    lastPack: Number,
     coins: Number,
     cards: Array,
-}, { collection: 'index'})
+}, { collection: 'users'})
 
 const User = mongoose.model('User', userSchema)
 

@@ -5,7 +5,7 @@ const cardSchema = new mongoose.Schema({
     url: String,
     rarity: String,
     id: Number
-}, { collection: 'index'})
+}, { collection: 'waifus'})
 
 const Waifu = mongoose.model('Waifu', cardSchema)
 
