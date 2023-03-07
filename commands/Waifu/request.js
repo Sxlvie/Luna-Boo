@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { Waifu } = require('../../schemas/waifu')
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('wrequest')
@@ -12,32 +11,59 @@ module.exports = {
 	async execute({ interaction: interaction, }) {
         // enter command here
 
+
 		let target = interaction.options.getString('link')
+
+
+		// do a check to see if it already exists in DB
+		let check = await Waifu.find({name: target})
+		if(check) {
+			await interaction.reply('Already exists in DB')
+			return
+		}
+
 		// use yande.re to get the data
-		const baselink = 'https://yande.re/post.json?&api_version=2tags=rating%3Asafe+'
-		// let data = await fetch(target)
-		// console.log(data)
+		const baselink = 'https://yande.re/post.json?&api_version=2&tags=rating%3Asafe+'
 
-		// console.log(encodeURIComponent(target));
 		const newLink = baselink + encodeURIComponent(target)
-		fetch(newLink)
-  			.then((response) => response.json())
-  			.then((data) => console.log(data.reduce((acc, curr) => {
-				if(curr.score > acc.score) {
-					return curr
-				}
-				return acc
-			})));
-		
-		// const waifu = new Waifu({
-		// 	name: 'test',
-		// 	url: 'test',
-		// 	rarity: 'legendary'
-		// })
-		
-		// await waifu.save()
+		console.log(newLink)
+		let pickList = await fetch(newLink)
+		let pick = await pickList.json()
+		// console.log(pick)
+		let topPick = pick.posts.reduce((acc, curr) => {
+			if(curr.score > acc.score) {
+				return curr
+			}
+			return acc
+		})
 
-		await interaction.reply('check logs')
+		let probability = {"common": 0.5, "uncommon": 0.2, "rare": 0.1, "mythical": 0.05, "legendary": 0.01}
+		let sum = 0
+		for (let j in probability) {
+			sum += probability[j]
+		}
+
+		function pickRandom() {
+			let newpick = Math.random()*sum
+			for (let j in probability) {
+				newpick -= probability[j]
+				if(newpick <= 0) return j;
+			}
+		}
+
+		let rarity = pickRandom()
+		console.log(rarity)
+
+		const waifu = new Waifu({
+			name: target.replace('_', ' '),
+			url: topPick.file_url,
+			rarity: rarity,
+			id: topPick.id
+		})
+		
+		await waifu.save()
+
+		await interaction.reply(topPick.file_url)
 
 	},
 };

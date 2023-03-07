@@ -8,7 +8,7 @@ const { checkDate } = require('./events/birthdayHandler');
 
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://127.0.0.1:27017/waifu')
+mongoose.connect('mongodb://127.0.0.1:27017/carddb')
 
 
 const db = new QuickDB({ path: './db.json' });
