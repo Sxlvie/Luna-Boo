@@ -1,22 +1,15 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Events, GatewayIntentBits, Collection, EmbedBuilder } = require('discord.js');
+const { Client, Events, GatewayIntentBits, Collection } = require('discord.js');
 const dotenv = require('dotenv');
-const date = require('date-and-time');
-const { QuickDB } = require('quick.db');
-const { checkDate } = require('./events/birthdayHandler');
+const { rankUpdate } = require('./events/rankUpdate');
 
-const mongoose = require('mongoose')
-
-mongoose.connect('mongodb://127.0.0.1:27017/carddb')
-
-
-const db = new QuickDB({ path: './db.json' });
 dotenv.config();
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMembers
     ]
 });
 
@@ -42,11 +35,12 @@ for (const subdir of subdirs) {
     }
 }
 
-
 client.once(Events.ClientReady, c => {
     console.log(`Logged in as ${c.user.tag}!`);
+    client.user.setActivity('with your mom');
 
-    checkDate({ date: date, db: db, })
+    // Check rank every 5 minutes
+    rankUpdate({ client: client })
 });
 
 client.on(Events.InteractionCreate, async interaction => {
