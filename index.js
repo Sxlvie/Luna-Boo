@@ -3,6 +3,7 @@ const path = require('node:path');
 const { Client, Events, GatewayIntentBits, Collection } = require('discord.js');
 const dotenv = require('dotenv');
 const { rankUpdate } = require('./events/rankUpdate');
+const { xpAdd } = require('./modules/xpAdd');
 const db  = require('better-sqlite3')('eclipse.db', { verbose: console.log });
 
 dotenv.config();
@@ -10,7 +11,8 @@ const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMembers
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates,
     ]
 });
 
@@ -43,11 +45,14 @@ client.once(Events.ClientReady, c => {
     // Check rank every 5 minutes
     rankUpdate({ client: client })
 
-    // Check if users table exists in database
-    const table = db.prepare('SELECT count(*) FROM sqlite_master WHERE type=\'table\' AND name = \'users\'').get();
-    if(!table['count(*)']) {
-        db.prepare('CREATE TABLE users (id TEXT PRIMARY KEY, xp INTEGER, level INTEGER)').run();
-        db.prepare('CREATE UNIQUE INDEX idx_users_id ON users (id)').run();
+
+    // Check if the required tables exist
+    const tables = db.prepare(`SELECT name FROM sqlite_master WHERE type='table'`).all();
+    if(!tables.some(table => table.name === 'users')) {
+        db.prepare(`CREATE TABLE users (id TEXT PRIMARY KEY, xp INTEGER, level INTEGER)`).run();
+    }
+    if(!tables.some(table => table.name === 'voice')) {
+        db.prepare(`CREATE TABLE voice (id TEXT PRIMARY KEY, time INTEGER)`).run();
     }
 });
 
@@ -73,36 +78,51 @@ client.on(Events.MessageCreate, async message => {
     
     const user = message.author;
     const id = user.id;
+    const xpAdded = Math.floor(Math.random() * 7) + 8;
 
-    const userExists = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
-    if(!userExists) {
-        db.prepare('INSERT INTO users (id, xp, level) VALUES (?, ?, ?)').run(id, 0, 1);
-        return;
-    }
-
-    const xp = userExists.xp;
-    const level = userExists.level;
-
-    const xpAdd = Math.floor(Math.random() * 7) + 8;
-    const newXP = xp + xpAdd;
-
-    const nextLevel = level * 300;
-    if(newXP >= nextLevel) {
-        db.prepare('UPDATE users SET xp = ?, level = ? WHERE id = ?').run(0, level + 1, id);
-        const levelUpEmbed = {
-            color: 0x0099ff,
-            title: 'Level Up!',
-            description: `${user} has leveled up to level ${level + 1}!`,
-            timestamp: new Date(),
-            footer: {
-                text: 'Eclipse Bot'
-            }
-        };
-        message.channel.send({ embeds: [levelUpEmbed] });
-        return;
-    }
-    db.prepare('UPDATE users SET xp = ? WHERE id = ?').run(newXP, id);
+    xpAdd({ db: db, id: id, xp: xpAdded, client: client })
 
 });
+
+client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+    if(newState.guild.id != process.env.GUILD_ID && oldState.guild.id != process.env.GUILD_ID) return;
+    
+    // Checking if they joined or left a voice channel
+    if(newState.channelId != oldState.channelId) {
+
+        // If they join a vc, we want to record the time of joining
+        if(oldState.channelId == null && newState.channelId != null) {
+            const id = newState.member.id;
+            const time = Date.now();
+
+            // Check if they already have a record
+            const user = db.prepare('SELECT * FROM voice WHERE id = ?').get(id);
+            if(user) {
+                // If they do, update the time
+                db.prepare('UPDATE voice SET time = ? WHERE id = ?').run(time, id);
+                return;
+            }
+
+            db.prepare('INSERT INTO voice (id, time) VALUES (?, ?)').run(id, time);
+        }
+
+        // If they leave a vc, we want to delete the time of joining and give XP based on the time spent
+        if(oldState.channelId != null && newState.channelId == null) {
+            // Give them XP at the rate of 2xp/min
+            const id = newState.member.id;
+            const time = Date.now();
+            const user = db.prepare('SELECT * FROM voice WHERE id = ?').get(id);
+            if(user) {
+                // Calculate XP
+                const timeSpent = time - user.time;
+                const xpAdded = Math.floor(timeSpent / 30000);
+                
+                xpAdd({ id: id, xp: xpAdded, db: db, client: client });
+                db.prepare('DELETE FROM voice WHERE id = ?').run(id);
+
+            }
+        }
+    }
+})
 
 client.login(process.env.DISCORD_TOKEN);
