@@ -54,6 +54,9 @@ client.once(Events.ClientReady, c => {
     if(!tables.some(table => table.name === 'voice')) {
         db.prepare(`CREATE TABLE voice (id TEXT PRIMARY KEY, time INTEGER)`).run();
     }
+    if(!tables.some(table => table.name === 'party')) {
+        db.prepare(`CREATE TABLE party (id TEXT PRIMARY KEY, channel TEXT, time INTEGER)`).run();
+    }
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -120,6 +123,18 @@ client.on(Events.VoiceStateUpdate, (oldState, newState) => {
                 xpAdd({ id: id, xp: xpAdded, db: db, client: client });
                 db.prepare('DELETE FROM voice WHERE id = ?').run(id);
 
+            }
+
+            // Check if they are the last person in the VC
+            const channel = oldState.channel;
+            if(channel.members.size == 0) {
+                // Check if the channel is a party channel
+                const party = db.prepare('SELECT * FROM party WHERE channel = ?').get(channel.id);
+                if(party) {
+                    // If it is, delete the party
+                    db.prepare('DELETE FROM party WHERE channel = ?').run(channel.id);
+                    channel.delete();
+                }
             }
         }
     }
