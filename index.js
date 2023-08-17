@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const { rankUpdate } = require('./events/rankUpdate');
 const { xpAdd } = require('./modules/xpAdd');
 const db  = require('better-sqlite3')('eclipse.db', { verbose: console.log });
+const config = require('./config.json');
 
 dotenv.config();
 const client = new Client({
@@ -76,7 +77,7 @@ client.on(Events.MessageCreate, async message => {
     // Setting up level system
     if(message.author.bot) return;
     if(message.channel.type === 'dm') return;
-    const guild = await client.guilds.cache.get(process.env.GUILD_ID);
+    const guild = await client.guilds.cache.get(config.guild_id);
     if (message.guild != guild) return;
     
     const user = message.author;
@@ -88,7 +89,7 @@ client.on(Events.MessageCreate, async message => {
 });
 
 client.on(Events.VoiceStateUpdate, (oldState, newState) => {
-    if(newState.guild.id != process.env.GUILD_ID && oldState.guild.id != process.env.GUILD_ID) return;
+    if(newState.guild.id != config.guild_id && oldState.guild.id != config.guild_id) return;
     
     // Checking if they joined or left a voice channel
     if(newState.channelId != oldState.channelId) {

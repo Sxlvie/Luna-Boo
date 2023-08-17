@@ -6,7 +6,8 @@ module.exports = {
 		.setName('ban')
 		.setDescription('Bans selected user')
         .addUserOption(option => option.setName(`target`).setDescription(`Select user to ban`).setRequired(true))
-        .addStringOption(option => option.setName(`reason`).setDescription(`Reason for ban`).setRequired(false)),
+        .addStringOption(option => option.setName(`reason`).setDescription(`Reason for ban`).setRequired(false))
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.BanMembers),
 	async execute({ interaction: interaction, }) {
         // enter command here
 		if(interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)) {

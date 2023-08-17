@@ -1,7 +1,9 @@
+const config = require('../config.json');
 
 async function xpAdd({ db: db, id: id, xp: xp, client: client, }) {
 
-    const channel = await client.channels.cache.get(process.env.LEVEL_CHANNEL_ID);
+
+    const channel = await client.channels.cache.get(config.level_channel_id);
     const user = await client.users.cache.get(id);
 
     // Check if user exists

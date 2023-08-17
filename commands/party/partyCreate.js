@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, ChannelType, PermissionFlagsBits } = require('discord.js');
+const config = require('../../config.json')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,7 +25,8 @@ module.exports = {
             guild.channels.create({
                 name: `${member.user.username}'s party`,
                 type: ChannelType.GuildVoice,
-                position: guild.channels.size + 1,
+                parent: config.party_category_id,
+                position: 0,
                 permissionOverwrites: [
                     {
                         type: 1,
