@@ -1,0 +1,67 @@
+const { SlashCommandBuilder, ChannelType, PermissionFlagsBits } = require('discord.js');
+
+module.exports = {
+	data: new SlashCommandBuilder()
+		.setName('partycreate')
+		.setDescription('Makes a party with accompanying VC'),
+	async execute({ interaction: interaction, db: db, client: client }) {
+        // enter command here
+
+        // Create a party using DB 
+        const member = interaction.member;
+        const guild = interaction.guild;
+
+        // Check if user already has a party
+        const party = db.prepare('SELECT * FROM party WHERE id = ?').get(interaction.user.id)
+        if (party) {
+            interaction.reply('You already have a party!')
+            return
+        }
+        
+        // Get the @everyone role to make the VC private
+        guild.roles.fetch().then(guildRoles => {
+            const role = guildRoles.find(r => r.name === '@everyone')
+            guild.channels.create({
+                name: `${member.user.username}'s party`,
+                type: ChannelType.GuildVoice,
+                position: guild.channels.size + 1,
+                permissionOverwrites: [
+                    {
+                        type: 1,
+                        id: member.user.id,
+                        allow: [PermissionFlagsBits.ManageChannels, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
+                    },
+                    {
+                        type: 0,
+                        id: role.id,
+                        deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
+    
+                    }
+                ]
+            }).then(channel => {
+
+                db.prepare('INSERT INTO party (id, channel, time) VALUES (?, ?, ?)').run(interaction.user.id, channel.id, Date.now())
+                interaction.reply('Party created, you have 2 minutes to join the VC before it gets deleted.')
+                
+                // Check if VC is empty after 2 min
+                setTimeout(() => {
+
+                    // Check if user still has a party
+                    const party = db.prepare('SELECT * FROM party WHERE id = ?').get(interaction.user.id)
+                    if (!party) return
+
+                    let firstMember = channel.members.keyAt(0)
+                    if (!firstMember) {
+                        channel.delete()
+                        db.prepare('DELETE FROM party WHERE id = ?').run(interaction.user.id)
+                    }
+                }, 120000)
+            })
+
+        })
+
+        
+
+        
+	},
+};
