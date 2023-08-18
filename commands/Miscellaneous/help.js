@@ -13,6 +13,16 @@ module.exports = {
             .setColor('#00ff00')
             .setThumbnail(interaction.member.displayAvatarURL())
             .setFooter({ text: `Requested by ${interaction.member.displayName}`, iconURL: interaction.member.displayAvatarURL() })
+            .setTimestamp();
 
+            // Add commands
+            const commands = interaction.client.commands;
+            commands.forEach(command => {
+                embed.addFields({ name: command.data.name, value: command.data.description })
+            }
+            )
+        
+        // Send the embed
+        interaction.reply({ embeds: [embed] })
 	},
 };
