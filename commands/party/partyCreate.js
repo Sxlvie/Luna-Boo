@@ -43,7 +43,7 @@ module.exports = {
             }).then(channel => {
 
                 db.prepare('INSERT INTO party (id, channel, time) VALUES (?, ?, ?)').run(interaction.user.id, channel.id, Date.now())
-                interaction.reply('Party created, you have 2 minutes to join the VC before it gets deleted.')
+                interaction.reply({ content: 'Party created, you have 2 minutes to join the VC before it gets deleted.', ephemeral: true })
                 
                 // Check if VC is empty after 2 min
                 setTimeout(() => {

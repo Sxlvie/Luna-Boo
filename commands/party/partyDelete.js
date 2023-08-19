@@ -25,7 +25,7 @@ module.exports = {
 
         db.prepare('DELETE FROM party WHERE id = ?').run(user.id);
 
-        interaction.reply('Party deleted');
+        interaction.reply({ content: 'Deleted your party!', ephemeral: true});
 
 
 	},

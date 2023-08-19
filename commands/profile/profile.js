@@ -3,15 +3,29 @@ const { SlashCommandBuilder, EmbedBuilder, Embed } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('profile')
-		.setDescription('Replies with profile stats'),
+		.setDescription('Replies with profile stats')
+        .addUserOption(option => option.setName(`target`).setDescription(`Find user's profile`).setRequired(false)),
 	async execute({ interaction: interaction, db: db }) {
         // enter command here
-		const user = interaction.user;
+        let user = interaction.user;
+
+        // Check if there's a target
+        const target = interaction.options.getUser('target');
+        if(target) {
+            // Do the same thing as below but for the target
+            user = target;
+        }
+		
         console.log(user)
         const id = user.id;
 
         const userExists = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
-        console.log(userExists)
+        if(!userExists) {
+            db.prepare('INSERT INTO users (id, xp, level) VALUES (?, ?, ?)').run(id, 0, 1);
+            interaction.reply({ content: `Profile doesn't exist, made a new one.`, ephemeral: true })
+            return;
+        }
+
         let xp = userExists.xp;
         let level = userExists.level;
         if(!userExists) {
@@ -35,16 +49,19 @@ module.exports = {
         const data = await res.json();
         console.log(data)
         
+        // Fetch member from user in guild
+        let member = await interaction.guild.members.fetch(id);
+
         const embed = new EmbedBuilder()
             .setTitle(`${user.username}'s profile`)
             .setDescription(`Here is your profile!`)
             .setColor('#00ff00')
-            .setThumbnail(interaction.member.displayAvatarURL())
-            // .setFooter(`Requested by ${interaction.member.displayName}`)
+            .setThumbnail(member.displayAvatarURL())
+            .setFooter({ iconURL: interaction.member.displayAvatarURL(), text: `Requested by ${interaction.member.user.username}` })
             .setTimestamp()
             .addFields(
                 { name: 'Level', value: `${level}`, inline: true },
-                { name: 'XP', value: `${xp}`, inline: true },
+                { name: 'XP', value: `${xp}/${15 * Math.pow(level, 2) + 100}`, inline: true },
                 { name: 'Rank', value: `${data.currentTierPatched}`, inline: true },
             )
             
