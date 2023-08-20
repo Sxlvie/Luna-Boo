@@ -1,6 +1,8 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
+const config = require('../config.json');
+
 const apiString = "https://valorant.aesirdev.tech/api/bot/profile"
 const apiKey = process.env.API_KEY
 
@@ -20,7 +22,7 @@ async function rankUpdate({ client: client }) {
     console.log('Checking rank...')
 
     // get all members of the server
-    const guild = await client.guilds.cache.get(process.env.GUILD_ID);
+    const guild = await client.guilds.cache.get(config.guild_id);
     const members = await guild.members.fetch();
 
     console.log("Members fetched")
@@ -48,27 +50,24 @@ async function rankUpdate({ client: client }) {
                 console.log(data)
                 const rankString = data.currentTierPatched;
                 if(!rankString) return;
-                console.log(rankString);
                 let rank = rankString.split(' ')[0];
-                console.log(rank);
+                console.log({rank})
 
                 guild.roles.fetch().then(guildRoles => {
-                    const role = guildRoles.find(role => role.name === rank);
-                    console.log(role.id)
-                    if(!roles.includes(role.id)) {
-                        user.roles.add(role);
-                        console.log(role.id)
-                        let newRole = role
+                    const newRole = guildRoles.find(role => role.name === rank);
+                    console.log({newRole: newRole.name})
 
-                        // Remove all other rank roles
-                        roles.forEach(role => {
-                            
-                            if(newRole.name == guildRoles.get(role).name) return;
-                            if(!rankList.includes(guildRoles.get(role).name)) return;
-                            console.log(guildRoles.get(role).name)
-                            user.roles.remove(role);
-                        })
+                    if(!roles.includes(newRole.id)) {
+                        user.roles.add(newRole);
                     }
+
+                    // Remove all other rank roles
+                    roles.forEach(role => {
+                        if(newRole.name == guildRoles.get(role).name) return;
+                        if(!rankList.includes(guildRoles.get(role).name)) return;
+                        console.log(guildRoles.get(role).name)
+                        user.roles.remove(role);
+                    })
                 })
             }
             )
