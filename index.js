@@ -67,6 +67,12 @@ client.on(Events.InteractionCreate, async interaction => {
         const button = interaction.component;
         const customId = button.customId;
 
+        if(customId == 'cancel') {
+            // Delete the message)
+            interaction.message.delete();
+        }
+
+
         if(customId.startsWith('whitelist')) {
             const target = customId.split('-')[1];
             const user = await client.users.fetch(target);
