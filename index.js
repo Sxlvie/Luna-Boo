@@ -6,6 +6,7 @@ const { rankUpdate } = require('./events/rankUpdate');
 const { xpAdd } = require('./modules/xpAdd');
 const db  = require('better-sqlite3')('eclipse.db', { verbose: console.log });
 const config = require('./config.json');
+const whitelist = require('./modules/whitelist');
 
 dotenv.config();
 const client = new Client({
@@ -61,7 +62,43 @@ client.once(Events.ClientReady, c => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
+    if(interaction.isButton()) {
+        // Custom button handling
+        const button = interaction.component;
+        const customId = button.customId;
+
+        if(customId.startsWith('whitelist')) {
+            const target = customId.split('-')[1];
+            const user = await client.users.fetch(target);
+            const channel = interaction.channel;
+            whitelist({ user: user, channel: channel, interaction: interaction })
+        }
+        
+    }
+    if(interaction.isUserSelectMenu()) {
+        // Custom select menu handling
+        const menu = interaction.component;
+        const customId = menu.customId;
+
+        if(customId == 'userSelect') {
+            // Get all of the users and whitelist them
+            const users = interaction.users.map(user => user.id);
+            const channel = await db.prepare('SELECT * FROM party WHERE id = ?').get(interaction.user.id);
+            if(!channel) {
+                interaction.reply({ content: `You don't have a party!`, ephemeral: true })
+                return;
+            }
+
+            const channelObj = await interaction.guild.channels.fetch(channel.channel);
+            console.log({users})
+            whitelist({ user: users, channel: channelObj, interaction: interaction })
+
+            interaction.reply({ content: `Whitelisted ${users.length} users!`, ephemeral: true })
+        }
+    }
+
     if(!interaction.isCommand()) return;
+    
     const command = client.commands.get(interaction.commandName);
     if(!command) return;
 

@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const whitelist = require('../../modules/whitelist');
 
 
 module.exports = {
@@ -17,22 +18,8 @@ module.exports = {
         }
         let channel = await interaction.guild.channels.fetch(party.channel);
         
-        let perms = []
-        channel.permissionOverwrites.cache.each(perm => {
-            perms.push(perm)
-        })
+       whitelist({ user: target, channel: channel, interaction: interaction })
 
-        perms.push({
-            type: 1,
-            id: target.id,
-            allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect]
-        })
-
-        channel.edit({
-            permissionOverwrites: [...perms]
-        })
-
-        interaction.reply({ content: `Whitelisted ${target.username}!`, ephemeral: true })
-
+       interaction.reply({ content: `Whitelisted ${target.username}!`, ephemeral: true })
 	},
 };
