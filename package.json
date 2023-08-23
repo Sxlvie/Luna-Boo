@@ -18,6 +18,7 @@
   "homepage": "https://github.com/8BitBlimp/Ayako-Bot#readme",
   "dependencies": {
     "better-sqlite3": "^8.5.0",
+    "canvas": "^2.11.2",
     "date-and-time": "^2.4.2",
     "discord.js": "^14.13.0",
     "dotenv": "^16.0.3",

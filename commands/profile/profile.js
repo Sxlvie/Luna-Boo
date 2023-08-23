@@ -1,5 +1,15 @@
 const { SlashCommandBuilder, EmbedBuilder, Embed } = require('discord.js');
 
+const rankColors = {
+    "Bronze": "#cd7f32",
+    "Silver": "#c0c0c0",
+    "Gold": "#ffd700",
+    "Platinum": "#e5e4e2",
+    "Diamond": "#b9f2ff",
+    "Immortal": "#4b0082",
+    "Radiant": "#ff0000"
+}
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('profile')
@@ -7,65 +17,78 @@ module.exports = {
         .addUserOption(option => option.setName(`target`).setDescription(`Find user's profile`).setRequired(false)),
 	async execute({ interaction: interaction, db: db }) {
         // enter command here
+        await interaction.deferReply()
+
         let user = interaction.user;
-
-        // Check if there's a target
-        const target = interaction.options.getUser('target');
-        if(target) {
-            // Do the same thing as below but for the target
-            user = target;
+        if(interaction.options.getUser('target')) {
+            user = interaction.options.getUser('target');
         }
-		
-        console.log(user)
-        const id = user.id;
-
-        const userExists = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
-        if(!userExists) {
-            db.prepare('INSERT INTO users (id, xp, level) VALUES (?, ?, ?)').run(id, 0, 1);
-            interaction.reply({ content: `Profile doesn't exist, made a new one.`, ephemeral: true })
-            return;
-        }
-
-        let xp = userExists.xp;
-        let level = userExists.level;
-        if(!userExists) {
-            [xp, level] = [0, 0];
-            return;
-        }
-        console.log('DB check done')
-
-        // Fetch data from the API
-        const res = await fetch(`https://valorant.aesirdev.tech/api/bot/profile`, {
+        
+        // Use the banner from the API
+        const res = await fetch(`http://localhost:3000/api/bot/profile`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': process.env.API_KEY
             },
             body: JSON.stringify({
-                "user_id": `${id}`
+                "user_id": `${user.id}`
             })
         })
-        
+
         const data = await res.json();
         console.log(data)
+
+        // Get data from DB
+        const userExists = db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);
+        if(!userExists) {
+            db.prepare('INSERT INTO users (id, xp, level) VALUES (?, ?, ?)').run(user.id, 0, 1);
+            interaction.reply({ content: `Profile doesn't exist, made a new one.`, ephemeral: true })
+            return;
+        }
         
-        // Fetch member from user in guild
-        let member = await interaction.guild.members.fetch(id);
+        // Create a canvas
+        const canvas = Canvas.createCanvas(268, 640);
+        const ctx = canvas.getContext('2d');
 
-        const embed = new EmbedBuilder()
-            .setTitle(`${user.username}'s profile`)
-            .setDescription(`Here is your profile!`)
-            .setColor('#00ff00')
-            .setThumbnail(member.displayAvatarURL())
-            .setFooter({ iconURL: interaction.member.displayAvatarURL(), text: `Requested by ${interaction.member.user.username}` })
-            .setTimestamp()
-            .addFields(
-                { name: 'Level', value: `${level}`, inline: true },
-                { name: 'XP', value: `${xp}/${15 * Math.pow(level, 2) + 100}`, inline: true },
-                { name: 'Rank', value: `${data.currentTierPatched}`, inline: true },
-            )
-            
+        const background = await Canvas.loadImage(data.banner);
+        // Dim the background
+        ctx.globalAlpha = 0.5;
 
-        interaction.reply({ embeds: [embed] });
+        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = 1;
+
+        // Write the gamename on the canvas
+        ctx.font = '35px sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = "center";
+        ctx.fillText(`${data.gameName}#${data.tagLine}`, 134, 40);
+
+        // Write the level on the canvas
+        ctx.font = '30px sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = "center";
+        ctx.fillText(`Level ${userExists.level}`, 134, 100);
+        ctx.fillText(`${userExists.xp} XP`, 134, 130);
+
+        // Write the rank on the canvas
+        ctx.font = '30px sans-serif';
+        ctx.textAlign = "center";
+
+        // Change fillStyle based on rank color
+        let rankCut = data.currentTierPatched.split(' ');
+        ctx.fillStyle = rankColors[rankCut[0]];
+
+        ctx.fillText(`${data.currentTierPatched}`, 134, 190);
+
+        // Add rank image to canvas
+        const rank = await Canvas.loadImage(data.currentRankImage);
+        console.log(rank.naturalWidth)
+        ctx.drawImage(rank, 134-(250/2), 240, 250, 250);
+
+
+        // Send the image
+        const attachment = new AttachmentBuilder(canvas.toBuffer(), 'profile.png');
+        interaction.editReply({ files: [attachment]})
 	},
 };
