@@ -10,7 +10,7 @@ module.exports = {
 
         const party = db.prepare('SELECT * FROM party WHERE id = ?').get(user.id);
         if(!party) {
-            interaction.reply('You do not have a party!');
+            interaction.reply({content: "You don't have a party.", ephemeral: true});
             return;
         }
 
@@ -25,7 +25,7 @@ module.exports = {
 
         db.prepare('DELETE FROM party WHERE id = ?').run(user.id);
 
-        interaction.reply('Party deleted');
+        interaction.reply({ content: 'Deleted your party!', ephemeral: true});
 
 
 	},

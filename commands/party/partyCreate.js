@@ -1,4 +1,6 @@
 const { SlashCommandBuilder, ChannelType, PermissionFlagsBits } = require('discord.js');
+const config = require('../../config.json');
+const whitelistPrompt = require('../../modules/whitelistPrompt');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -14,7 +16,7 @@ module.exports = {
         // Check if user already has a party
         const party = db.prepare('SELECT * FROM party WHERE id = ?').get(interaction.user.id)
         if (party) {
-            interaction.reply('You already have a party!')
+            interaction.reply({content: 'You already have a party!', ephemeral: true})
             return
         }
         
@@ -24,7 +26,8 @@ module.exports = {
             guild.channels.create({
                 name: `${member.user.username}'s party`,
                 type: ChannelType.GuildVoice,
-                position: guild.channels.size + 1,
+                parent: config.party_category_id,
+                position: 0,
                 permissionOverwrites: [
                     {
                         type: 1,
@@ -41,8 +44,12 @@ module.exports = {
             }).then(channel => {
 
                 db.prepare('INSERT INTO party (id, channel, time) VALUES (?, ?, ?)').run(interaction.user.id, channel.id, Date.now())
-                interaction.reply('Party created, you have 2 minutes to join the VC before it gets deleted.')
+                interaction.reply({ content: 'Party created, you have 2 minutes to join the VC before it gets deleted.', ephemeral: true })
+                .then(() => {
+                    whitelistPrompt({ interaction: interaction, party: party })
+                })
                 
+
                 // Check if VC is empty after 2 min
                 setTimeout(() => {
 
