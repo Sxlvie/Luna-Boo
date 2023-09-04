@@ -22,14 +22,12 @@ module.exports = {
 
         // Fetch data from the API
         const res = await fetch(`https://valorant.aesirdev.tech/api/bot/profile`, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': process.env.API_KEY
-            },
-            body: JSON.stringify({
-                "user_id": `${id}`
-            })
+                'Authorization': process.env.API_KEY,
+                'id': id
+            }
         })
         
         const data = await res.json();
