@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, Embed } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, Embed, AttachmentBuilder } = require('discord.js');
 const Canvas = require('canvas');
 
 const rankColors = {
