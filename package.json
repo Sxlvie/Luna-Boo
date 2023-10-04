@@ -4,7 +4,7 @@
   "description": "A public release of the Discord bot called Meat-Friend",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
