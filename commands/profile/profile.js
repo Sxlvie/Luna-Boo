@@ -1,4 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, Embed } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, Embed, AttachmentBuilder } = require('discord.js');
+const Canvas = require('canvas');
 
 const rankColors = {
     "Bronze": "#cd7f32",
@@ -25,25 +26,29 @@ module.exports = {
         }
         
         // Use the banner from the API
-        const res = await fetch(`http://localhost:3000/api/bot/profile`, {
-            method: 'POST',
+        const res = await fetch(`http://valorant.aesirdev.tech/api/bot/profile`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': process.env.API_KEY
-            },
-            body: JSON.stringify({
-                "user_id": `${user.id}`
-            })
+                'Authorization': process.env.API_KEY,
+                'id': user.id
+            }
         })
 
         const data = await res.json();
         console.log(data)
 
+        // Error handling
+        if(res.status != 200) {
+            interaction.editReply({ content: `Error: ${data.error}`, ephemeral: true })
+            return;
+        }
+
         // Get data from DB
         const userExists = db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);
         if(!userExists) {
             db.prepare('INSERT INTO users (id, xp, level) VALUES (?, ?, ?)').run(user.id, 0, 1);
-            interaction.reply({ content: `Profile doesn't exist, made a new one.`, ephemeral: true })
+            interaction.editReply({ content: `Profile doesn't exist, made a new one.`, ephemeral: true })
             return;
         }
         

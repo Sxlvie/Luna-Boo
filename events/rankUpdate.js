@@ -35,14 +35,12 @@ async function rankUpdate({ client: client }) {
         const roles = user._roles
         const id = user.user.id
         fetch(apiString, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': "TEST"
-            },
-            body: JSON.stringify({
-                "user_id": `${id}`
-            })
+                'Authorization': "TEST",
+                'id': id
+            }
         }).then(res => {
             console.log(res.status)
             if(res.status != 200) return;
