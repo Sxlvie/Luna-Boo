@@ -21,7 +21,7 @@ async function xpAdd({ db: db, id: id, xp: xp, client: client, }) {
     const nextLevel = 15 * Math.pow(level, 2) + 100;
     if(newXP >= nextLevel) {
         db.prepare('UPDATE users SET xp = ?, level = ? WHERE id = ?').run(newXP - nextLevel, level + 1, id);
-        channel.send(`${user} has leveled up to level ${level + 1}!`);
+        channel.send(`${user.username} has leveled up to level ${level + 1}!`);
     }
 }
 

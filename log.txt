@@ -1,0 +1,197 @@
+
+> ayako-bot@1.0.0 start
+> node index.js
+
+[ 'Miscellaneous', 'Moderation', 'party', 'profile' ]
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [],
+      name: 'help',
+      name_localizations: undefined,
+      description: 'Gives you a list of usable commands!',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [],
+      name: 'link',
+      name_localizations: undefined,
+      description: 'Link your Valorant account to your Discord account!',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [],
+      name: 'ping',
+      name_localizations: undefined,
+      description: 'Replies with Pong!',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [Array],
+      name: 'ban',
+      name_localizations: undefined,
+      description: 'Bans selected user',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: '4',
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [Array],
+      name: 'kick',
+      name_localizations: undefined,
+      description: 'Kicks selected user',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [Array],
+      name: 'verify',
+      name_localizations: undefined,
+      description: 'Checks user valorant profile',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: '268435456',
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [],
+      name: 'partycreate',
+      name_localizations: undefined,
+      description: 'Makes a party with accompanying VC',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [],
+      name: 'partydelete',
+      name_localizations: undefined,
+      description: 'deletes your party (should not be used normally)',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [Array],
+      name: 'whitelist',
+      name_localizations: undefined,
+      description: 'Whitelists selected user',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [],
+      name: 'leaderboard',
+      name_localizations: undefined,
+      description: 'Gives top 10 users with the most xp',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [],
+      name: 'level',
+      name_localizations: undefined,
+      description: 'Replies with your level',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
+{
+  command: {
+    data: SlashCommandBuilder {
+      options: [Array],
+      name: 'profile',
+      name_localizations: undefined,
+      description: 'Replies with profile stats',
+      description_localizations: undefined,
+      default_permission: undefined,
+      default_member_permissions: undefined,
+      dm_permission: undefined,
+      nsfw: undefined
+    },
+    execute: [AsyncFunction: execute]
+  }
+}
