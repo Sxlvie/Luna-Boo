@@ -131,6 +131,8 @@
     execute: [AsyncFunction: execute]
   }
 }
+{ command: {} }
+[WARNING] Command at C:\Users\Silvie\Documents\GitHub\Luna-Boo\commands\party\partyLFG.js is missing "data" or "execute"
 {
   command: {
     data: SlashCommandBuilder {
@@ -195,3 +197,40 @@
     execute: [AsyncFunction: execute]
   }
 }
+Logged in as Luna Bot#2964!
+Checking rank...
+SELECT name FROM sqlite_master WHERE type='table'
+Members fetched
+{
+  apiKey: undefined,
+  apiString: 'https://valorant.aesirdev.tech/api/bot/profile'
+}
+[ '1203001570623492217' ]
+[ '1203017957341397033', '1203516242959401042' ]
+[]
+[]
+[]
+[]
+[]
+[ '1203001570623492217', '1203424303710867486', '1203017957341397033' ]
+[]
+[]
+[]
+[]
+[]
+[]
+[
+  '1204120688403947680',
+  '1203001570623492217',
+  '1203017957341397033',
+  '1204120626672046090',
+  '1203424303710867486'
+]
+[]
+[
+  '1204120688403947680',
+  '1203516433099919410',
+  '1202736884443258920',
+  '1203001570623492217',
+  '1204120626672046090'
+]

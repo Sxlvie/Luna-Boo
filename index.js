@@ -42,7 +42,7 @@ for (const subdir of subdirs) {
 
 client.once(Events.ClientReady, c => {
     console.log(`Logged in as ${c.user.tag}!`);
-    client.user.setActivity('with your mom');
+    client.user.setActivity('/help');
 
     // Check rank every 5 minutes
     rankUpdate({ client: client })

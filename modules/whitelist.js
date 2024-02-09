@@ -35,7 +35,7 @@ async function whitelist({ user: user, channel: channel, interaction: interactio
 
         // DM the user that they've been whitelisted
         for(const u of user) {
-            u.send({ content: `You've been whitelisted in ${channel.name}!` })
+            u.send({ content: `You've been whitelisted in server VC; ${channel.name}!` })
         }
 
     } else {
@@ -58,7 +58,7 @@ async function whitelist({ user: user, channel: channel, interaction: interactio
         })
     
         // DM the user that they've been whitelisted
-        user.send({ content: `You've been whitelisted in ${channel.name}!` })
+        user.send({ content: `You've been whitelisted in server VC; ${channel.name}!` })
     }
 
 

@@ -7,6 +7,7 @@ const rankColors = {
     "Gold": "#ffd700",
     "Platinum": "#e5e4e2",
     "Diamond": "#b9f2ff",
+    "Ascendant": "#1e8a51",
     "Immortal": "#4b0082",
     "Radiant": "#ff0000"
 }

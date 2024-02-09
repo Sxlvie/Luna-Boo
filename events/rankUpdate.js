@@ -14,6 +14,7 @@ const rankList = [
     "Gold",
     "Platinum",
     "Diamond",
+    "Ascendant",
     "Immortal",
     "Radiant"
 ]
