@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js');
+const config = require('../../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,13 +17,13 @@ module.exports = {
             .setTimestamp();
 
         const settings = new ButtonBuilder()
-            .setURL('https://valorant.aesirdev.tech/settings')
+            .setURL("https://lunavalorant.vodka/link")
             .setLabel('Link')
             .setStyle(ButtonStyle.Link)
 
         const guide = new ButtonBuilder()
             .setLabel('Guide')
-            .setURL('https://valorant.aesirdev.tech/link')
+            .setURL('https://lunavalorant.vodka/link')
             .setStyle(ButtonStyle.Link)
 
         const cancel = new ButtonBuilder()
