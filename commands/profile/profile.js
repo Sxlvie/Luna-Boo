@@ -28,12 +28,12 @@ module.exports = {
         }
         
         // Use the banner from the API
-        const res = await fetch(`${config.api_url}bot/profile`, {
+        const res = await fetch(`${config.api_url}v1/valorant/by-discord`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': process.env.API_KEY,
-                'id': user.id
+                'Discord-ID': user.id
             }
         })
 
@@ -69,7 +69,7 @@ module.exports = {
         ctx.font = '35px sans-serif';
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = "center";
-        ctx.fillText(`${data.gameName}#${data.tagLine}`, 134, 40);
+        ctx.fillText(`${data.name}#${data.tag}`, 134, 40);
 
         // Write the level on the canvas
         ctx.font = '30px sans-serif';
@@ -83,13 +83,13 @@ module.exports = {
         ctx.textAlign = "center";
 
         // Change fillStyle based on rank color
-        let rankCut = data.currentTierPatched.split(' ');
+        let rankCut = data.currenttierpatched.split(' ');
         ctx.fillStyle = rankColors[rankCut[0]];
 
-        ctx.fillText(`${data.currentTierPatched}`, 134, 190);
+        ctx.fillText(`${data.currenttierpatched}`, 134, 190);
 
         // Add rank image to canvas
-        const rank = await Canvas.loadImage(data.currentRankImage);
+        const rank = await Canvas.loadImage(data.currentrankimage);
         console.log(rank.naturalWidth)
         ctx.drawImage(rank, 134-(250/2), 240, 250, 250);
 
