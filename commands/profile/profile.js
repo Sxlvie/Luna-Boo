@@ -58,7 +58,7 @@ module.exports = {
         const canvas = Canvas.createCanvas(268, 640);
         const ctx = canvas.getContext('2d');
 
-        const background = await Canvas.loadImage(data.banner);
+        const background = await Canvas.loadImage(data.banner.large);
         // Dim the background
         ctx.globalAlpha = 0.5;
 
