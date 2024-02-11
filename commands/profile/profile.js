@@ -58,11 +58,15 @@ module.exports = {
         const canvas = Canvas.createCanvas(268, 640);
         const ctx = canvas.getContext('2d');
 
-        const background = await Canvas.loadImage(data.banner);
-        // Dim the background
-        ctx.globalAlpha = 0.5;
+        const background = await Canvas.loadImage(data.banner.large);       
 
         ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+        // Draw a black rectangle over the image
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+
+        ctx.globalAlpha = 0.5;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.globalAlpha = 1;
 
         // Write the gamename on the canvas
