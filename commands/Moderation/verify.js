@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, Embed, PermissionFlagsBits } = require('discord.js');
+const config = require('../../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -21,7 +22,7 @@ module.exports = {
         const id = user.id;
 
         // Fetch data from the API
-        const res = await fetch(`https://valorant.aesirdev.tech/api/bot/profile`, {
+        const res = await fetch(`${config.api_url}bot/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

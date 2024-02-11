@@ -2,5 +2,6 @@
     "client_id": "1203442532822818826",
     "guild_id": "1202685705424474162",
     "party_category_id": "1202736774913331220",
-    "level_channel_id": "1202685707303391294"
+    "level_channel_id": "1202685707303391294",
+    "api_url": "https://lunavalorant.vodka/api/"
 }
