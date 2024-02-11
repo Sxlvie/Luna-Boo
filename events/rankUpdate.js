@@ -3,7 +3,7 @@ dotenv.config();
 
 const config = require('../config.json');
 
-const apiString = "https://valorant.aesirdev.tech/api/bot/profile"
+const apiString = config.api_url + "bot/profile"
 const apiKey = process.env.API_KEY
 
 const rankList = [

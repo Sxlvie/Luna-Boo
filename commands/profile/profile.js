@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, Embed, AttachmentBuilder } = require('discord.js');
 const Canvas = require('canvas');
+const config = require('../../config.json');
 
 const rankColors = {
     "Bronze": "#cd7f32",
@@ -27,7 +28,7 @@ module.exports = {
         }
         
         // Use the banner from the API
-        const res = await fetch(`http://valorant.aesirdev.tech/api/bot/profile`, {
+        const res = await fetch(`${config.api_url}bot/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
