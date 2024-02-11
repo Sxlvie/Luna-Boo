@@ -3,7 +3,7 @@ dotenv.config();
 
 const config = require('../config.json');
 
-const apiString = config.api_url + "bot/profile"
+const apiString = config.api_url + "v1/valorant/by-discord"
 const apiKey = process.env.API_KEY
 
 const rankList = [
@@ -39,21 +39,21 @@ async function rankUpdate({ client: client }) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': "TEST",
-                'id': id
+                'Authorization': apiKey,
+                'Discord-ID': id
             }
         }).then(res => {
             console.log(res.status)
             if(res.status != 200) return;
             res.json().then(data => {
                 console.log(data)
-                const rankString = data.currentTierPatched;
+                const rankString = data.currenttierpatched;
                 if(!rankString) return;
                 let rank = rankString.split(' ')[0];
                 console.log({rank})
 
                 guild.roles.fetch().then(guildRoles => {
-                    const newRole = guildRoles.find(role => role.name === rank);
+                    const newRole = guildRoles.find(role => role.name.toLowerCase() === rank.toLowerCase());
                     console.log({newRole: newRole.name})
 
                     if(!roles.includes(newRole.id)) {
