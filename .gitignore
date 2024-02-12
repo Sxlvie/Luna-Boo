@@ -6,3 +6,4 @@ commands/Miscellaneous/test.js
 
 # Config files
 config.json
+test.*

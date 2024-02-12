@@ -21,17 +21,33 @@ async function xpAdd({ db: db, id: id, xp: xp, client: client, guild: guild}) {
     
     const level = userExists.level;
     const newXP = userExists.xp + xp;
-    const nextLevel = 15 * Math.pow(level, 2) + 100;
-    if(newXP >= nextLevel) {
-        db.prepare('UPDATE users SET xp = ?, level = ? WHERE id = ?').run(newXP - nextLevel, level + 1, id);
-        if(!member) {
-            channel.send(`${user.displayName} has leveled up to level ${level + 1}!`);
-        } else {
-            channel.send(`${member.displayName} has leveled up to level ${level + 1}!`);
-        }
+    
+    const { level: newLevel, xp: newXP2 } = calculateLevel(level, newXP);
+
+
+    db.prepare('UPDATE users SET xp = ?, level = ? WHERE id = ?').run(newXP2, newLevel, id);
+    if(!member) {
+        channel.send(`${user.displayName} has leveled up to level ${newLevel} from ${level}!`);
+    } else {
+        channel.send(`${member.displayName} has leveled up to level ${newLevel} from ${level}!`);
     }
+    
 }
 
 module.exports = {
     xpAdd
+}
+
+const calculateLevel = (level, xp) => {
+    let nextLevel = 15 * Math.pow(level, 2) + 100;
+    while (xp >= nextLevel) {
+        level++;
+        xp -= nextLevel;
+        nextLevel = 15 * Math.pow(level, 2) + 100;
+    }
+
+    return {
+        level,
+        xp
+    }
 }
