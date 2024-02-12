@@ -1,10 +1,13 @@
 const config = require('../config.json');
 
-async function xpAdd({ db: db, id: id, xp: xp, client: client, }) {
+async function xpAdd({ db: db, id: id, xp: xp, client: client, guild: guild}) {
 
 
     const channel = await client.channels.cache.get(config.level_channel_id);
     const user = await client.users.cache.get(id);
+
+    // Get member instead of user
+    const member = guild.members.cache.get(id)
 
     // Check if user exists
 
@@ -21,11 +24,10 @@ async function xpAdd({ db: db, id: id, xp: xp, client: client, }) {
     const nextLevel = 15 * Math.pow(level, 2) + 100;
     if(newXP >= nextLevel) {
         db.prepare('UPDATE users SET xp = ?, level = ? WHERE id = ?').run(newXP - nextLevel, level + 1, id);
-        console.log(user.nickname)
-        if(user.nickname == null||user.nickname == undefined) {
+        if(!member) {
             channel.send(`${user.displayName} has leveled up to level ${level + 1}!`);
         } else {
-            channel.send(`${user.nickname} has leveled up to level ${level + 1}!`);
+            channel.send(`${member.displayName} has leveled up to level ${level + 1}!`);
         }
     }
 }

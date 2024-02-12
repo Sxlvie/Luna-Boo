@@ -127,7 +127,7 @@ client.on(Events.MessageCreate, async message => {
     const id = user.id;
     const xpAdded = Math.floor(Math.random() * 7) + 8;
 
-    xpAdd({ db: db, id: id, xp: xpAdded, client: client })
+    xpAdd({ db: db, id: id, xp: xpAdded, client: client, guild: message.guild })
 
 });
 

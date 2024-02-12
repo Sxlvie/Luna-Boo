@@ -22,12 +22,12 @@ module.exports = {
         const id = user.id;
 
         // Fetch data from the API
-        const res = await fetch(`${config.api_url}bot/profile`, {
+        const res = await fetch(`${config.api_url}v1/valorant/by-discord`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': process.env.API_KEY,
-                'id': id
+                'Discord-ID': id
             }
         })
         

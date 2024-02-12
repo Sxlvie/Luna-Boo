@@ -46,14 +46,7 @@ module.exports = {
             return;
         }
 
-        // Get data from DB
-        const userExists = db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);
-        if(!userExists) {
-            db.prepare('INSERT INTO users (id, xp, level) VALUES (?, ?, ?)').run(user.id, 0, 1);
-            interaction.editReply({ content: `Profile doesn't exist, made a new one.`, ephemeral: true })
-            return;
-        }
-        
+
         // Create a canvas
         const canvas = Canvas.createCanvas(268, 640);
         const ctx = canvas.getContext('2d');
@@ -79,8 +72,10 @@ module.exports = {
         ctx.font = '30px sans-serif';
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = "center";
-        ctx.fillText(`Level ${userExists.level}`, 134, 100);
-        ctx.fillText(`${userExists.xp} XP`, 134, 130);
+        ctx.fillText(`Level ${data.account_level}`, 134, 100);
+
+        // Elo
+        ctx.fillText(`Elo ${data.elo}`, 134, 140)
 
         // Write the rank on the canvas
         ctx.font = '30px sans-serif';
