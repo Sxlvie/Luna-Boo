@@ -3,3 +3,6 @@
 *.db
 commands/Miscellaneous/test.js
 *.txt
+
+# Config files
+config.json

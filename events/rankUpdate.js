@@ -49,24 +49,13 @@ async function rankUpdate({ client: client }) {
                 console.log(data)
                 const rankString = data.currenttierpatched;
                 if(!rankString) return;
-                let rank = rankString.split(' ')[0];
+                const rank = rankString.split(' ')[0];
                 console.log({rank})
 
+                if (!rankList.includes(rank)) return;
+
                 guild.roles.fetch().then(guildRoles => {
-                    const newRole = guildRoles.find(role => role.name.toLowerCase() === rank.toLowerCase());
-                    console.log({newRole: newRole.name})
-
-                    if(!roles.includes(newRole.id)) {
-                        user.roles.add(newRole);
-                    }
-
-                    // Remove all other rank roles
-                    roles.forEach(role => {
-                        if(newRole.name == guildRoles.get(role).name) return;
-                        if(!rankList.includes(guildRoles.get(role).name)) return;
-                        console.log(guildRoles.get(role).name)
-                        user.roles.remove(role);
-                    })
+                    handleRoles(user, rank, guildRoles, roles);
                 })
             }
             )
@@ -80,4 +69,26 @@ async function rankUpdate({ client: client }) {
 
 module.exports = {
     rankUpdate
+}
+
+const handleRoles = (user, rank, guildRoles, roles) => {
+    const newRole = guildRoles.find(role => role.name.toLowerCase() === rank.toLowerCase());
+    if(!newRole) {
+        console.log(rank + " Role not found");
+        return;
+    }
+
+    console.log(newRole.name)
+
+    if(!roles.includes(newRole.id)) {
+        user.roles.add(newRole);
+    }
+
+    // Remove all other rank roles
+    roles.forEach(role => {
+        if(newRole.name == guildRoles.get(role).name) return;
+        if(!rankList.includes(guildRoles.get(role).name)) return;
+        console.log(guildRoles.get(role).name)
+        user.roles.remove(role);
+    })
 }

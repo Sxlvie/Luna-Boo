@@ -3,5 +3,16 @@
     "guild_id": "1202685705424474162",
     "party_category_id": "1202736774913331220",
     "level_channel_id": "1202685707303391294",
-    "api_url": "https://lunavalorant.vodka/api/"
+    "api_url": "https://lunavalorant.vodka/api/",
+
+    "rank_roles": {
+        "Bronze": "#cd7f32",
+        "Silver": "#c0c0c0",
+        "Gold": "#ffd700",
+        "Platinum": "#e5e4e2",
+        "Diamond": "#b9f2ff",
+        "Ascendant": "#1e8a51",
+        "Immortal": "#4b0082",
+        "Radiant": "#ff0000"
+    }
 }
