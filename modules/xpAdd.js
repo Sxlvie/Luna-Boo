@@ -24,6 +24,7 @@ async function xpAdd({ db: db, id: id, xp: xp, client: client, guild: guild}) {
     
     const { level: newLevel, xp: newXP2 } = calculateLevel(level, newXP);
 
+    if (newLevel === level) return;
 
     db.prepare('UPDATE users SET xp = ?, level = ? WHERE id = ?').run(newXP2, newLevel, id);
     if(!member) {
