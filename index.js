@@ -185,3 +185,12 @@ client.on(Events.VoiceStateUpdate, (oldState, newState) => {
 })
 
 client.login(process.env.DISCORD_TOKEN);
+
+process.on('unhandledRejection', error => {
+    console.log('Unhandled promise rejection:', error);
+    process.exit(1);
+}).on('uncaughtException', error => {
+    console.log('Uncaught exception:', error);
+    process.exit(1);
+}
+);
