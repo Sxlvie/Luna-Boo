@@ -134,6 +134,8 @@ client.on(Events.MessageCreate, async message => {
 client.on(Events.VoiceStateUpdate, (oldState, newState) => {
     if(newState.guild.id != config.guild_id && oldState.guild.id != config.guild_id) return;
     
+    // TODO - Refactor to support user leaving and joining at the same time
+
     // Checking if they joined or left a voice channel
     if(newState.channelId != oldState.channelId) {
 
@@ -164,7 +166,7 @@ client.on(Events.VoiceStateUpdate, (oldState, newState) => {
                 const timeSpent = time - user.time;
                 const xpAdded = Math.floor(timeSpent / 30000);
                 
-                xpAdd({ id: id, xp: xpAdded, db: db, client: client });
+                xpAdd({ id: id, xp: xpAdded, db: db, client: client, guild: oldState.guild });
                 db.prepare('DELETE FROM voice WHERE id = ?').run(id);
 
             }
