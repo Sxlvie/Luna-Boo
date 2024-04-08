@@ -7,6 +7,7 @@ const { xpAdd } = require('./modules/xpAdd');
 const db  = require('better-sqlite3')('eclipse.db', { verbose: console.log });
 const config = require('./config.json');
 const whitelist = require('./modules/whitelist');
+const handleVC = require('./modules/vcHandler');
 
 dotenv.config();
 const client = new Client({
@@ -132,58 +133,7 @@ client.on(Events.MessageCreate, async message => {
 });
 
 client.on(Events.VoiceStateUpdate, (oldState, newState) => {
-    if(newState.guild.id != config.guild_id && oldState.guild.id != config.guild_id) return;
-    
-    // TODO - Refactor to support user leaving and joining at the same time
-
-    // Checking if they joined or left a voice channel
-    if(newState.channelId != oldState.channelId) {
-
-        // If they join a vc, we want to record the time of joining
-        if(oldState.channelId == null && newState.channelId != null) {
-            const id = newState.member.id;
-            const time = Date.now();
-
-            // Check if they already have a record
-            const user = db.prepare('SELECT * FROM voice WHERE id = ?').get(id);
-            if(user) {
-                // If they do, update the time
-                db.prepare('UPDATE voice SET time = ? WHERE id = ?').run(time, id);
-                return;
-            }
-
-            db.prepare('INSERT INTO voice (id, time) VALUES (?, ?)').run(id, time);
-        }
-
-        // If they leave a vc, we want to delete the time of joining and give XP based on the time spent
-        if(oldState.channelId != null && newState.channelId == null) {
-            // Give them XP at the rate of 2xp/min
-            const id = newState.member.id;
-            const time = Date.now();
-            const user = db.prepare('SELECT * FROM voice WHERE id = ?').get(id);
-            if(user) {
-                // Calculate XP
-                const timeSpent = time - user.time;
-                const xpAdded = Math.floor(timeSpent / 30000);
-                
-                xpAdd({ id: id, xp: xpAdded, db: db, client: client, guild: oldState.guild });
-                db.prepare('DELETE FROM voice WHERE id = ?').run(id);
-
-            }
-
-            // Check if they are the last person in the VC
-            const channel = oldState.channel;
-            if(channel.members.size == 0) {
-                // Check if the channel is a party channel
-                const party = db.prepare('SELECT * FROM party WHERE channel = ?').get(channel.id);
-                if(party) {
-                    // If it is, delete the party
-                    db.prepare('DELETE FROM party WHERE channel = ?').run(channel.id);
-                    channel.delete();
-                }
-            }
-        }
-    }
+    handleVC(client, oldState, newState, db);
 })
 
 client.login(process.env.DISCORD_TOKEN);
